@@ -1,0 +1,58 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTER GRAPHICS - THEORY
+Updated proposal
+320324187 · GPO06
+2027-1 · 23 November 2026
+1. Proposal and located source
+Virtual environment for space travel and intergalactic species evolution. The located historical proposal is
+a 14-page PDF whose cover states 30 September 2026 as its preparation date. It proposed two planets
+and a space zone. The original remains unchanged in the original project. This is a Theory edition with
+corrected identification and an updated description; it does not establish that the proposal was submitted
+to Classroom before 20 October.
+The product lets users control Rek’Sai and a ship across surfaces and space. It combines rock and
+crystals, forest and an ocean wave with a base, track, capsules, satellite and hangar. Fictional-universe
+references describe the academic prototype’s visual inspiration; they do not imply an official franchise
+production.
+Current scope checked against implementation
+Four experiences remain: planet, racing, flight and observation. Worlds are separate states, entered
+through proximity/interaction and left through portals or zone transitions. The avatar is animated through
+parts. There are procedural rockets, a keyframed rocket, doors, panels and computed trajectories. TARS
+is confirmed in Main.cpp and Tars.cpp. Gohan, domes and other planned models are not treated as
+completed merely because they appear in the proposal.
+Figure 1. Racing in the Release implementation.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Organization, changes and completion criteria
+Member A focuses on engine, cameras, lighting, builds and integration; Member B on worlds,
+infrastructure, assets and environmental animations; Member C - 320324187 on Rek’Sai, input,
+experiences and HUD. The individual scope is documented in the technical manual and work log. This
+edition does not replace the individual logs of A and B.
+Earlier proposal
+Implementation / revision
+Two planets
+Rock, forest and ocean in current code.
+Rek’Sai as avatar
+Nine parts, pivots and alternating gait phases.
+Experiences
+F1-F4 are modes; F5-F8 are destinations.
+Externally distributed assets
+Complete optimized copy; evaluate delivery branch and publication record.
+Theory completion criteria
+Completion requires seven justified animations, a functional camera, coherent lighting and transforms,
+reviewed geometry/textures, an executable Release and bilingual individual documentation. Models +
+Textures must remain below 100 MB. The GitHub link must support rebuilding the project. Videos, a video
+blog, ZIP archives and PDB files are not added as requirements of this Theory rubric.
+Conclusion
+Updating the proposal explains changes without rewriting the past. The project moved from two planned
+surfaces to three zones with distinct experiences. Its academic value lies in connecting models, matrices,
+animation, lighting and interaction within one scene. Submission claims must be supported by concrete
+tests while retaining portability and visual-review limitations. The stated Theory deadline is before 00:00
+on 24 November 2026, Mexico City time; the student will submit the work.
+Sources: local 14-page proposal PDF, cover dated 30 Sep 2026; Drive proposal
+10ZSUCcTl6NHdS9TP59f8Lie2TOvQx9AN5i7RtobtPJw; original clone PLAN_MAESTRO section 15. No Classroom submission
+receipt was located.

@@ -1,0 +1,8 @@
+320324187 - GPO06
+Copia individual para Teoria de un proyecto desarrollado en equipo.
+Origen: https://github.com/Cuervy117/CG_proyecto
+Version copiada: 2ffcb6d919ab137ef03468b2da4fa302260b4691
+Se conserva el contenido, las licencias y las atribuciones del proyecto.
+El repositorio original y su historial no se modifican al crear esta copia.
+Las contribuciones de A/B/C se describen en los manuales; esta copia no
+atribuye todo el programa a 320324187.

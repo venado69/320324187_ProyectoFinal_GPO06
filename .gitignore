@@ -1,0 +1,50 @@
+# Build / IDE
+.vs/
+x64/
+Debug/
+Release/
+build/
+LabCGeIHC/
+*.exe
+*.pdb
+*.ilk
+*.tlog
+*.user
+*.suo
+
+# Backups de trabajo
+*.bak
+*.bak2
+*.bak3
+*.bak_refactor
+
+# Recursos de Teoria versionados; fuentes de autor y paquetes temporales aparte.
+# Teoria: recursos y dependencias deben viajar con el codigo.
+Dependencias/
+# Las mallas OBJ de Models son recursos; x64 ya esta ignorado.
+*.blend
+*.zip
+
+# Capturas de trabajo y bundle de traspaso
+capturas_*/
+artefactos/
+/RekSai OpenGL - Animacion/
+
+# Herramientas / editor
+.processed_tasks.json
+.vscode/
+reksai_referencia.jpg
+
+# Documentos locales (cada integrante genera su AGENTS.md; ver PLAN §16.6-16.7)
+/docs/*
+!/docs/teoria/
+/AGENTS.md
+/LEEME.txt
+/manifest-dependencies.json
+/CAPTURAS_P09.md
+/P09_ANIMACION_BASICA.md
+
+# Archivos temporales de validación
+tmp/
+__pycache__/
+evidencias-release/

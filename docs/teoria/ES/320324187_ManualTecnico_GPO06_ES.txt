@@ -1,0 +1,323 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTACIÓN GRÁFICA - TEORÍA
+Manual técnico
+320324187 · GPO06
+2027-1 · 23 noviembre 2026
+1. Objetivo y alcance
+Desarrollar y documentar un entorno interactivo tridimensional en Windows que conecte exploración
+planetaria, carrera, vuelo y observación. La contribución individual comprende el avatar Rek’Sai, su
+animación jerárquica, la captura de entrada y el HUD, integrados con el mundo y el motor del equipo.
+El alcance implementado incluye una base espacial y tres superficies: roca, selva y océano. El cambio de
+zona es un cambio de estado y de escena; no es un aterrizaje continuo sobre una esfera. Los modos
+F1-F4 describen experiencias. La cámara de seguimiento, persecución, vuelo u órbita define cómo se
+observa la experiencia.
+Limitantes
+El sistema solicita un contexto OpenGL 4.3 Core en Window::Initialise, aunque documentación previa
+mencionaba 3.3. Se evalúa Windows x64, con C++17 y toolset v143. No se implementa una simulación
+biológica ni un motor físico general. Las texturas se redujeron a un máximo de 512 × 512 en la copia de
+entrega; esto reduce detalle visual. No hay medición de rendimiento ni prueba independiente en una
+segunda computadora.
+Estado del arte
+La rasterización programable separa atributos de vértice, transformaciones, muestreo de texturas e
+iluminación por fragmento [1]. En este proyecto se usa ese flujo para mostrar modelos importados y
+geometría procedural. GLFW gestiona la ventana, el contexto y los eventos [2]; GLM representa vectores
+y matrices [3]; Assimp convierte archivos de modelos en una escena importada [4]. La animación
+implementada se basa en transformaciones jerárquicas, trayectorias paramétricas y cuadros clave. Este
+enfoque permite estudiar explícitamente las matemáticas de cada frame.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Tecnologías y decisiones
+Tecnología
+Uso y justificación
+Alternativa / límite
+C++17 / Visual Studio
+Código nativo, solución Windows y bibliotecas
+existentes.
+Más control manual que un motor
+integrado.
+OpenGL / GLSL
+Transformación y luz explícitas, acordes con el
+laboratorio.
+Un motor integrado reduciría código
+propio; ocultaría parte del pipeline.
+GLFW / GLEW
+Ventana, entrada y acceso a funciones OpenGL.
+Usar Win32 directamente exigiría más
+código de plataforma.
+GLM
+Matrices compatibles con convenciones GLSL.
+Implementar álgebra propia añadiría
+riesgo.
+Assimp
+Carga de OBJ/FBX, mallas, materiales y
+triangulación.
+Rek’Sai usa además un lector OBJ por
+grupos.
+Blender
+Preparación de piezas y reducción de polígonos
+de copias locales.
+No se requiere Blender para jugar.
+Organización real del código
+Main.cpp coordina el bucle, las zonas, las luces y las acciones de infraestructura. SceneVerification.cpp
+contiene las verificaciones integradas, no un segundo main. src/engine contiene Window, Model, Texture,
+Shader_light y las clases de luz. src/scene contiene SceneNode, Scene y CameraDirector con FollowXZ,
+Chase, Flight y Orbit. src/game/world contiene Superficie, Espacio, Oceano, Jugador y Reloj. Avatar.cpp
+y Tars.cpp gestionan modelos articulados. Input.cpp separa captura y mapeo; src/ui/Hud.cpp dibuja el
+estado. CoheteKeyframes.h carga y reproduce veinte canales del cohete por piezas.
+
+
+--- 3 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+3
+3. Flujo del sistema y contratos
+Inicio: localizar recursos / crear contexto OpenGL
+Cargar recursos compartidos y avatar
+Recibir eventos y consumir entrada
+Actualizar modo, zona, jugador y animación
+Actualizar matrices, luces y cámara
+Dibujar cielo, escena y HUD / intercambiar
+Repetir hasta Escape o cierre
+Datos, propiedad y orden
+InputCapture actualiza teclas sostenidas, flancos, desplazamiento del ratón y rueda. La corrección de
+entrega conserva pulsaciones recibidas y liberadas dentro de un solo glfwPollEvents; consume cada
+evento una vez. Los modos de CameraDirector y la zona activa son estados independientes. El bucle
+limita dt a 0.05 s; las pruebas de animación usan un paso fijo de 1/60 s.
+SceneNode posee hijos mediante unique_ptr y mantiene referencias prestadas a recursos gráficos.
+updateWorld propaga las matrices antes de que cámaras y render las consuman. Avatar::attach clasifica
+grupos del OBJ y construye nueve piezas con pivotes locales. Model::LoadModel importa mallas y
+materiales; resolverRutaTextura busca recursos relativos. Los planetas se preparan bajo demanda en
+PrepararRecursosSuperficie.
+El arranque localiza Models y Textures a partir de la ruta del EXE y sus carpetas superiores.
+Window::Initialise centra la ventana en el área de trabajo del monitor principal. El contexto se crea antes
+de cargar recursos GPU. Las fuentes permanecen legibles junto con la solución y las dependencias
+locales.
+
+
+--- 4 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+4
+4. Transformaciones e iluminación
+SceneNode::local construye Mlocal = T · Ry · Rx · Rz · S. updateWorld aplica Mworld = Mpadre · Mlocal.
+El punto de una pieza se transforma primero en espacio local y después hereda el desplazamiento del
+padre. Para girar alrededor de una bisagra p se usa T(p) · R(θ) · T(-p); Main.cpp aplica ese patrón a la
+cápsula y CoheteKeyframes::Dibujar a las piezas del cohete.
+shaders/shader_light.frag calcula ambiente, difusión y reflexión especular de tipo Phong: Id = kd ·
+max(N·L,0) e Is = ks · max(V·R,0)^s. La luz puntual se atenúa con la distancia y la spotlight añade un
+cono de corte. El material controla brillo e intensidad especular. La emisión aporta brillo propio, pero no
+sustituye la iluminación que recibe la geometría.
+El ciclo de iluminación usa θ = 2πt/120 y alturaSol = sen(θ). El factor diurno se limita para conservar luz
+ambiente; también controla luminarias. Las teclas F, L y K alternan tres focos. Las capturas muestran
+zonas deliberadamente oscuras; no se considera demostrada la ausencia de defectos de iluminación
+solo porque el shader exista.
+Figura 1. Roca: avatar, cápsula, cristales y luminarias en el render Release.
+
+
+--- 5 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+5
+5. Siete sistemas de animación
+El conteo agrupa repeticiones y todas las piezas de una marcha. Se separa el cohete por cuadros clave
+del lanzamiento procedural porque el primero combina separación articulada y órbita por veinte canales,
+mientras el segundo usa una máquina de estados con ascenso acelerado. La aceptación de esa
+distinción corresponde a la evaluación docente; existen además NPC paramétricos en
+Superficie::MatrizNPC y la salida/regreso del Fighter como alternativas verificables.
+ID / objeto
+Contexto y conteo
+Implementación
+1 Rek’Sai
+Marcha completa; una sola animación
+articulada.
+Avatar::update
+src/game/avatar/Avatar.cpp
+2 Cohete por cuadros
+clave
+Despegue y separación: un sistema, no una
+animación por pieza.
+CoheteKeyframes::Actualizar / Dibujar
+src/game/anim/CoheteKeyframes.h
+3 Cohete procedural
+Ignición, ascenso, órbita y retorno; ambos
+sitios cuentan una vez.
+Espacio::ActualizarCohetes
+src/game/world/Espacio.cpp
+4 Puertas
+Acceso a cápsula/hangar;
+conservadoramente se agrupan todas las
+puertas.
+AnimarCapsula / ActualizarPuertaHangar
+Main.cpp
+5 Paneles de satélite
+Repliegue de paneles; dos paneles cuentan
+una vez.
+AnimarSatelite
+Main.cpp
+6 Trayectoria de
+satélite
+Inspección de un objeto orbital; rotor incluido
+en el mismo sistema.
+PosicionSatelite / TangenteSatelite / 
+AnimarSatelite
+Main.cpp
+7 Naves rivales
+Competencia en un circuito; ambas naves
+cuentan una vez.
+Jugador::EstadoRival
+src/game/world/Jugador.cpp
+La página siguiente detalla las ecuaciones y el procedimiento de prueba. Una imagen aislada acredita renderizado, no continuidad
+temporal.
+
+
+--- 6 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+6
+Matemática y prueba de animaciones
+1. Rek’Sai
+Patas opuestas: 0.78 sen(φ) y 0.78 sen(φ+π). Brazos, cabeza y cola derivan de la misma fase; φ avanza
+con dt y velocidad.
+2. Cohete por cuadros clave
+20 canales; α=(t-ti)/(ti+1-ti); v=(1-α)vi+αvi+1. Incluye traslación, giro en pivote, separación y órbita.
+3. Cohete procedural
+Ascenso h=Hτ² con τ limitado a [0,1]; vibración de ignición y oscilación orbital.
+4. Puertas
+Cápsula: θ←θ+(θobjetivo-θ)min(1,6dt); bisagra local. Hangar: apertura limitada de dos segundos.
+5. Paneles de satélite
+Factor interpolado hacia 0/1, giro hacia ±85° y oscilaciones opuestas al desplegarse.
+6. Trayectoria de satélite
+Dos lóbulos paramétricos; tangente normalizada para orientar el objeto. θ←θ+ωdt; la guía ajusta el paso
+por la norma de la derivada.
+7. Naves rivales
+d=(desfase+18t) mod L. Distancia acumulada selecciona tramo; posición y base tangente se obtienen de
+pista, superficie u océano.
+Reproducir LabCGeIHC.exe --probar-animaciones. La secuencia inyecta eventos en el mismo callback GLFW usado por el
+teclado, avanza 3360 frames a dt=1/60 y guarda capturas cada 120 frames. Activa 6 en roca, F4/1 para D1, Tab/4 para hangar,
+Tab/3 para satélite, F2 para rivales y F1/W para la marcha. No reemplaza una revisión manual de encuadre, ausencia de
+intersecciones ni calidad artística.
+
+
+--- 7 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+7
+6. Gantt individual y responsabilidades
+El diagrama muestra actividades realizadas del Integrante C. Los intervalos de 17, 30-31 de octubre y 7
+de noviembre proceden del registro histórico; no son horas confirmadas para esta entrega. El 2 y 6 de
+noviembre y el 12-14 de noviembre corresponden a las confirmaciones actuales. No se convierten fechas
+de commits en duración de trabajo.
+17 Oct
+30 Oct
+2 Nov
+6 Nov
+14 Nov
+Recursos / trabajo previo
+Preparación Rek’Sai
+Avatar + HUD
+Integración / pruebas
+TARS (Git)
+Documentos
+Intervalos de calendario; la longitud no representa horas.
+Función
+Responsabilidad documentada
+Integrante A
+Motor, escena, cámaras, iluminación, compilación, merges y Release.
+Integrante B
+Mundos, recursos, infraestructura y sus animaciones.
+Integrante C - 320324187
+Rek’Sai, entrada, experiencias, integración y HUD; TARS aparece como incorporación
+posterior en Git.
+7. Análisis de costos y precio
+Desembolso directo declarado: $0 MXN. El equipo ya disponía de computadoras; no se registraron
+compras específicas. Esto no significa que el desarrollo carezca de costo económico: no se midieron
+electricidad, depreciación ni horas totales de las tres personas. Hay 7 horas individuales confirmadas
+para HUD, integración y documentación, pero no se definió una tarifa por hora y el registro no representa
+todo el proyecto.
+Modelo de valoración: Cdesarrollo = Σ(hi · ri) + Cenergía + Cequipo + Ccompras. Los términos sin
+registro permanecen sin cuantificar. La propuesta del estudiante es publicar una demo gratuita para
+obtener comentarios, detectar fallos y orientar mejoras; después, una versión de aproximadamente $120
+MXN. Es una intención de precio, no una venta, cotización validada ni proyección de ingresos. El punto
+de equilibrio no puede calcularse sin costo total y gastos de distribución.
+
+
+--- 8 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+8
+8. Verificación y reproducibilidad
+Se compiló Release x64 con MSBuild de Visual Studio instalado. La compilación concluyó con
+advertencias de conversión ya presentes, principalmente C4244/C4305. --probar-release completó
+espacio, roca, selva, océano, carrera, lanzamiento D1 y hangar con código de salida 0. Se probó el EXE
+desde otra carpeta. Una ventana real fue observada y capturada en la base espacial. Las capturas
+automáticas documentan el framebuffer de las zonas.
+Los modelos OBJ se revisan por índices dentro de rango y valores finitos; se corrigen materiales de
+respaldo y rutas absolutas encontradas. Esta prueba no demuestra mallas cerradas, ausencia de caras
+degeneradas o ausencia total de intersecciones. La optimización reduce detalle; su calidad artística y
+todas las colisiones requieren recorrido visual más amplio. TARS sí está integrado, actualizado y visible
+por condición en el océano. La estación inspirada en Freezer se carga; no se equipara automáticamente
+a todas las versiones previas de nave.
+Conclusión individual
+Trabajar con Rek’Sai me permitió relacionar grupos de geometría, pivotes y matrices con un movimiento
+visible. La marcha requiere coordinación entre piezas: no basta girar patas por separado. La integración
+con entrada, cámaras y HUD hizo necesario separar intención del usuario, estado del mundo y
+representación. También aprendí que compilar no garantiza que otra persona vea una ventana o
+encuentre los recursos. Documentar el código y repetir pruebas del ejecutable completo permite distinguir
+una función implementada de una experiencia realmente comprobada.
+Conclusión del sistema y límites de la entrega
+La escena reúne técnicas de transformaciones, cámara sintética, iluminación y animación procedural en
+un programa común. El trabajo por funciones ayudó a integrar modelos y recorridos, pero recursos
+externos y documentación desactualizada generaron discrepancias. La preparación actual mejora
+portabilidad, tamaño y trazabilidad sin sustituir pruebas pendientes. La versión evaluable está en el
+repositorio individual 320324187_ProyectoFinal_GPO06, rama main. PROCEDENCIA.txt identifica la
+versión del proyecto en equipo utilizada para esta copia. La prueba en otra computadora y la revisión
+completa de geometría permanecen pendientes.
+Fuentes consultadas [1]-[5]
+[1] Khronos Group. The OpenGL Graphics System, version 4.3 Core Profile (2013).
+https://registry.khronos.org/OpenGL/specs/gl/glspec43.core.pdf
+[2] GLFW. Documentation. https://www.glfw.org/documentation.html
+[3] G-Truc Creation. OpenGL Mathematics. https://glm.g-truc.net/0.9.9/index.html
+[4] Assimp. Working with the Asset-Importer-Lib. https://the-asset-importer-lib-documentation.readthedocs.io/en/latest/usage/use_th
+e_lib.html
+[5] Original team repository / repositorio original del equipo: https://github.com/Cuervy117/CG_proyecto. Individual submission /
+entrega individual: https://github.com/venado69/320324187_ProyectoFinal_GPO06 (main).
+
+
+--- 9 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+9
+9. Evidencia de animación y resultados
+La secuencia reproducible terminó con salida 0. El cohete por cuadros clave llegó a t=26.000 s; el satélite
+avanzó a θ=1.434 con paneles plegados a factor 0.000; la puerta de cápsula alcanzó 75.000°; Rek’Sai se
+desplazó 28.233 unidades a pie con una pata a -0.351 rad. Los números pertenecen a la prueba
+simulada, no a una medición de rendimiento.
+La tabla de siete animaciones con objeto, contexto, función, matemática, evidencia y procedimiento se
+entrega también en 320324187_Animaciones_GPO06_ES.csv y su equivalente EN. Las imágenes se
+denominan por el frame de prueba; por ejemplo, 2880/3000 para marcha, 1920/2040 para hangar y
+2400/2520 para rivales. El encuadre del cohete de esta figura es exclusivo de la prueba.
+Figura 2. Frames 0, 480, 960 y 1679: ascenso, separación y caída de piezas.
+
+
+--- 10 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+10
+Trabajo en equipo y mi aportación
+Este proyecto se desarrolló en equipo durante el laboratorio. Cada integrante se encargó de una parte y
+después juntamos el trabajo en un mismo programa. Esta documentación es mi entrega individual de
+Teoría, identificada con 320324187 y GPO06.
+Integrante
+Parte del proyecto
+A
+Motor, escena, cámaras, iluminación, compilación, merges y preparación del Release.
+B
+Mundos, infraestructura, carga de recursos y animaciones de los elementos del entorno.
+C - 320324187
+Rek’Sai, movimiento y animación del avatar, entrada y experiencias, integración con el
+programa común, HUD y pruebas de mi parte.
+Qué hice yo
+Mi parte principal fue trabajar con Rek’Sai: preparar sus piezas y puntos de giro, ajustar la caminata y
+conectar su movimiento con los controles. También trabajé en la entrada de teclado y mouse y en el
+HUD, para mostrar el modo, la zona y el estado del jugador. Al integrar mi parte revisé que funcionara
+con las cámaras y los escenarios del equipo.
+En el código, esta parte se puede seguir en src/game/avatar/Avatar.cpp, Input.cpp y src/ui/Hud.cpp,
+además de su conexión en Main.cpp. El historial también registra la integración posterior de TARS en el
+océano. Los módulos del motor y del mundo conservan el trabajo de A y B.

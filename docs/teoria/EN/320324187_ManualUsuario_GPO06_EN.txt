@@ -1,0 +1,105 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTER GRAPHICS - THEORY
+User manual
+320324187 · GPO06
+2027-1 · 23 November 2026
+1. The environment and startup
+This space environment lets you explore as Rek’Sai, use a ship, follow a racing circuit and observe
+animated objects. It contains a base and three planetary zones: crystal-covered rock, forest and an ocean
+with a wave. Third-person cameras follow the character or ship; free camera and orbit provide other
+viewpoints.
+Requirements: Windows x64 and a graphics driver supporting OpenGL 4.3. Open PROYECTO_GITHUB
+and run Jugar.cmd or the root LabCGeIHC.exe. Keep Models, Textures, shaders and DLLs beside the
+executable. Blender and Visual Studio are not required to play. The application finds assets from its own
+location even when launched from another directory.
+After loading, Rek’Sai appears on the base; a separate console may also appear. The clock is in the
+upper-left corner; the lower HUD identifies mode, zone and state. F9 releases the mouse. A console or
+running process alone does not establish that the game is visible: a scene like the following must appear.
+Figure 1. Release startup: base, avatar and HUD.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Implemented controls
+Controls were checked against Main.cpp, Input.cpp and Window::ManejaTeclado. Y, U, G and O from
+earlier documents are not presented as controls for this version.
+Key / action
+Result and context
+F1 / F2 / F3 / F4
+On-foot planet / racing / flight / observation. These are experience modes.
+F5 / F6 / F7 / F8
+Forest / rock / ocean / space. These change the zone.
+W A S D + mouse
+Move and look. In racing, W/S accelerate/brake and A/D change lane.
+Q / E
+Descend / ascend in flight; E also interacts according to context.
+J
+Board or leave the ship when allowed by state and zone.
+C
+Toggle free camera.
+Tab / mouse wheel
+In F4: next target / distance.
+1
+Activate/reset the procedural rocket in space or forest D1. In F4, a rocket must be selected.
+2 / 3
+Toggle capsule door / satellite panels.
+4 / 5
+Fighter departure and return / hangar door; 5 operates while parked.
+6 / 7
+In rock: play / reset the keyframed rocket.
+F / L / K
+Flashlight / ship light / base spotlight.
+F9 / Esc
+Release or capture the cursor / close the application.
+Mode, zone and view
+F1-F4 do not mean first, second, third or fourth person. F5-F8 change location. C enables a free camera
+and the wheel changes distance in F4; these view changes do not create a new game experience.
+
+
+--- 3 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+3
+3. Suggested walkthrough
+1) Inspect the base and HUD. 2) Press F6 for rock and F1 to walk as Rek’Sai; try WASD and mouse. 3)
+Use 2 for the capsule door, 6 to play the staged rocket and 7 to reset it. 4) Press F5 for forest. 5) Press F2
+for racing; W/S control speed and A/D change lane. 6) In F3, fly between planets. Approaching an
+atmosphere changes zone; E is contextual and portals provide exits. In the ocean, the ship’s route follows
+the wave toward its exit.
+In F4, Tab cycles through available D1, hangar, rock, forest, satellite and base-rocket targets. At the
+hangar, 4 starts the Fighter departure/return and 5 demonstrates the door. At the satellite, 3 folds the
+panels. F1 returns to on-foot travel on the last planet. F8 returns to space.
+Figure 2. Hangar viewed in F4.
+Troubleshooting
+If no window appears, check the complete DLL and asset set and inspect the --probar-release log; a
+dependency failure can terminate before any text appears. Use F9 if the pointer is captured. If lost, use F8
+or F6/F1. If a key is pressed during loading, wait and press it again. The first visit may load models.
+Hardware without OpenGL 4.3 is not supported.
+
+
+--- 4 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+4
+Teamwork and my contribution
+This project was developed as a team during the laboratory course. Each member worked on a different
+part, and we then integrated those parts into one application. This documentation is my individual Theory
+submission, identified by 320324187 and GPO06.
+Member
+Project contribution
+A
+Engine, scene, cameras, lighting, compilation, merges and Release preparation.
+B
+Worlds, infrastructure, resource loading and animation of environmental objects.
+C - 320324187
+Rek’Sai, avatar movement and animation, input and experiences, integration with the shared
+application, HUD and tests of my contribution.
+What I worked on
+My main contribution was Rek’Sai: preparing the parts and pivots, adjusting the gait and connecting
+movement to the controls. I also worked on keyboard and mouse input and the HUD, which displays the
+mode, zone and player state. During integration, I checked that my contribution worked with the team’s
+cameras and environments.
+This contribution can be followed in src/game/avatar/Avatar.cpp, Input.cpp and src/ui/Hud.cpp, together
+with their integration in Main.cpp. The history also records the later integration of TARS in the ocean.
+Engine and world modules retain the work of A and B.

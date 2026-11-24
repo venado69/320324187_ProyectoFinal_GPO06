@@ -1,0 +1,84 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTACIÓN GRÁFICA - TEORÍA
+Bitácora individual
+320324187 · GPO06
+2027-1 · 23 noviembre 2026
+1. Responsabilidad individual y registro
+Integrante C - 320324187. Mi trabajo comprende Rek’Sai, movimiento y animación, entrada, integración
+con el programa común, HUD y pruebas. La bitácora separa hechos registrados y duración confirmada.
+Los tiempos no anotados no se consideran cero. No se atribuyen al estudiante las horas del trabajo
+automatizado de esta preparación.
+Fecha
+Actividad / evidencia
+Tiempo
+17 Oct
+Recursos preliminares Dragon Ball; registro histórico, no contenido final
+garantizado.
+No registrado
+30-31 Oct
+Preparación y separación de Rek’Sai; intervalo del registro previo.
+No confirmado
+aquí
+31 Oct
+Entrada, rama e integración preliminar; aedcd41.
+No registrado
+2 Nov
+Avatar y marcha; 5ae68e0. La duración previa difiere entre documentos.
+No consolidado
+2 Nov
+HUD de prueba.
+≈2.5 h
+6 Nov
+Revisar por qué no abría; integrar y probar la parte individual.
+≈0.5 h
+7 Nov
+TARS en océano: b97274a; el registro de Git acredita integración, no verificación
+visual en otra PC.
+No registrado
+12-14 Nov
+Correcciones de manuales, portadas, conclusiones y bitácora. Última modificación
+declarada: 14 Nov.
+≈4 h
+23 Nov
+Preparación de Teoría: auditoría, documentación bilingüe, optimización y pruebas.
+No registrado
+Total parcial confirmado: aproximadamente 7 h. No es el tiempo total de desarrollo. Se corrige la entrada de 6 Nov a 30 minutos;
+no se duplican las 2.5 horas del HUD.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Gantt de trabajo individual
+17 Oct
+30 Oct
+2 Nov
+6 Nov
+14 Nov
+Recursos / trabajo previo
+Preparación Rek’Sai
+Avatar + HUD
+Integración / pruebas
+TARS (Git)
+Documentos
+Intervalos de calendario; la longitud no representa horas.
+Problemas y aprendizaje
+La documentación anterior mezclaba cámaras con modos de experiencia y conservaba controles que no
+coinciden con esta versión. La revisión del código permitió describir por separado el modo, la zona y la
+cámara. También mostró que TARS, antes señalado como ausente, sí se integró en el océano. Para la
+estación inspirada en Freezer solo se afirma la carga verificada del modelo que referencia el código.
+La integración obliga a revisar recursos, dependencias y ventanas visibles, además de la lógica
+individual. Las pruebas de esta preparación distinguen compilación, ejecución automática y observación
+de la ventana. Mantener esa separación evita considerar concluido un hito solo porque existe un EXE o
+una entrada en Git.
+Conclusión individual
+El aprendizaje principal fue conectar la jerarquía del avatar con la respuesta del teclado y la información
+en pantalla. Ajustar pivotes, fases y amplitudes tiene consecuencias tanto geométricas como de
+interacción. Las correcciones sucesivas también demostraron la importancia de registrar horas cuando se
+trabaja y conservar evidencia vinculada a una versión concreta. La documentación individual debe
+explicar lo que hice y sus límites, sin adjudicarme módulos de otros integrantes ni convertir una
+planeación en trabajo realizado.
+Fuentes: confirmaciones del estudiante del 23 Nov 2026; bitácora individual de Drive; historial conservado del repositorio;
+Main.cpp, Avatar.cpp, Input.cpp y Hud.cpp. Las contradicciones no se resuelven inventando horas.

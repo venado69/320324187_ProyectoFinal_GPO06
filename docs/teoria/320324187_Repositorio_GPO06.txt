@@ -1,0 +1,9 @@
+320324187 - GPO06 - REPOSITORIO INDIVIDUAL
+URL de entrega: https://github.com/venado69/320324187_ProyectoFinal_GPO06
+Rama principal: main.
+Es un repositorio independiente. La procedencia del proyecto en equipo y
+su version fuente estan en PROCEDENCIA.txt; no se atribuye todo el codigo
+a un solo integrante ni se cambia el historial del repositorio del equipo.
+Incluye EXE Release, DLL, fuentes, dependencias, modelos/texturas y manuales.
+Las pruebas anteriores corresponden al codigo copiado y se conservan como
+antecedente; se verificara tambien una descarga de esta copia independiente.

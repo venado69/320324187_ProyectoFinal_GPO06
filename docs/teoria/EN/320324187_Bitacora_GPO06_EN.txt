@@ -1,0 +1,79 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTER GRAPHICS - THEORY
+Individual work log
+320324187 · GPO06
+2027-1 · 23 November 2026
+1. Individual responsibility and record
+Member C - 320324187. My work covers Rek’Sai, movement and animation, input, integration with the
+shared application, HUD and tests. This log separates recorded activity from confirmed duration.
+Unrecorded time is not treated as zero. Automated preparation time is not attributed to the student.
+Date
+Activity / evidence
+Time
+17 Oct
+Preliminary Dragon Ball assets; historical record, not guaranteed final content.
+Not recorded
+30-31 Oct
+Rek’Sai preparation and separation; interval from earlier records.
+Not confirmed
+here
+31 Oct
+Input, branch and preliminary integration; aedcd41.
+Not recorded
+2 Nov
+Avatar and gait; 5ae68e0. Earlier documents disagree on duration.
+Not consolidated
+2 Nov
+Prototype HUD.
+≈2.5 h
+6 Nov
+Investigate startup failure; integrate and test the individual module.
+≈0.5 h
+7 Nov
+Ocean TARS: b97274a; Git establishes integration, not visual verification on
+another PC.
+Not recorded
+12-14 Nov
+Manual, cover, conclusion and log corrections. Last declared change: 14 Nov.
+≈4 h
+23 Nov
+Theory preparation: audit, bilingual documentation, optimization and tests.
+Not recorded
+Confirmed partial total: approximately 7 h. This is not total development time. The 6 Nov entry is corrected to 30 minutes; the 2.5
+HUD hours are not duplicated.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Individual work Gantt
+17 Oct
+30 Oct
+2 Nov
+6 Nov
+14 Nov
+Resources / prior work
+Rek’Sai preparation
+Avatar + HUD
+Integration / tests
+TARS (Git)
+Documents
+Calendar intervals, not hours.
+Problems and learning
+Earlier documentation confused camera views with experience modes and retained controls that differ
+from this version. Source review allowed mode, zone and camera to be described separately. It also
+showed that TARS, previously described as absent, is integrated in the ocean. For the Freezer-inspired
+station, the claim is limited to the model actually referenced and loaded by the code.
+Integration requires assets, dependencies and visible windows to be checked alongside individual logic.
+Preparation tests distinguish compilation, automatic execution and window observation. Maintaining that
+distinction avoids treating an executable or Git entry as proof that a milestone is finished.
+Individual conclusion
+The main lesson was connecting avatar hierarchy with keyboard response and on-screen information.
+Adjusting pivots, phases and amplitudes affects both geometry and interaction. Repeated corrections also
+showed the importance of recording time while working and linking evidence to a specific version.
+Individual documentation should explain my contribution and its limits without claiming other members’
+modules or turning plans into completed work.
+Sources: student confirmations on 23 Nov 2026; individual Drive log; preserved repository history; Main.cpp, Avatar.cpp, Input.cpp
+and Hud.cpp. Contradictions are not resolved by inventing hours.

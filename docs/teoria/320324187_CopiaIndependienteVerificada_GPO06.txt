@@ -1,0 +1,16 @@
+320324187 - GPO06
+REPOSITORIO INDEPENDIENTE VERIFICADO
+
+https://github.com/venado69/320324187_ProyectoFinal_GPO06
+
+Se descargo este repositorio mediante git clone, en una carpeta nueva.
+El manifiesto verifico correctamente los 195 archivos de modelos/texturas.
+El EXE descargado termino --probar-release con salida 0 y [Release] OK.
+La prueba --probar-animaciones tambien termino con salida 0: 3360 frames.
+El SHA-256 del EXE es:
+84aa079afde6eca3b68596744f5da0038e22ae13f27fed6d4651a83daa9a188a
+
+Se conservan las DLL, shaders y recursos necesarios junto al ejecutable.
+No es necesario descargar recursos adicionales del repositorio del equipo.
+Las pruebas fueron en esta misma PC Windows; no acreditan otra PC fisica.
+No se envio nada a Classroom.

@@ -1,0 +1,108 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTACIÓN GRÁFICA - TEORÍA
+Manual de usuario
+320324187 · GPO06
+2027-1 · 23 noviembre 2026
+1. El entorno y cómo abrirlo
+Este entorno espacial permite explorar con Rek’Sai, usar una nave, recorrer una pista y observar
+elementos animados. Contiene una base y tres zonas planetarias: roca con cristales, selva y océano con
+una ola. La cámara de tercera persona sigue al personaje o a la nave; la cámara libre y la órbita permiten
+observar desde otros puntos.
+Requisitos: Windows x64 y controlador con soporte OpenGL 4.3. Abre PROYECTO_GITHUB y ejecuta
+Jugar.cmd o LabCGeIHC.exe de la raíz. Conserva Models, Textures, shaders y las DLL junto al EXE. No
+es necesario instalar Blender ni abrir Visual Studio para jugar. La aplicación busca sus recursos desde su
+propia ubicación, aunque la inicies desde otra carpeta.
+Al cargar aparece Rek’Sai en la base y puede aparecer una consola adicional. El reloj está arriba a la
+izquierda; el HUD inferior identifica modo, zona y estado. Con F9 puedes liberar el ratón. Una consola o
+un proceso por sí solos no confirman que el juego se haya mostrado: debe aparecer una escena como la
+siguiente.
+Figura 1. Inicio del Release: base, avatar y HUD.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Controles implementados
+Las teclas se contrastaron con Main.cpp, Input.cpp y Window::ManejaTeclado. Las teclas Y, U, G y O de
+los documentos viejos no se presentan como controles de esta versión.
+Tecla / acción
+Resultado y contexto
+F1 / F2 / F3 / F4
+Planeta a pie / carrera / vuelo / observación. Son modos de experiencia.
+F5 / F6 / F7 / F8
+Selva / roca / océano / espacio. Cambian la zona.
+W A S D + mouse
+Mover y orientar. En carrera W/S aceleran/frenan y A/D desplazan de carril.
+Q / E
+Descender / ascender en vuelo; E también interactúa según el contexto.
+J
+Abordar o bajar de la nave donde el estado y la zona lo permiten.
+C
+Alternar cámara libre.
+Tab / mouse wheel
+En F4: siguiente objetivo / distancia.
+1
+Activar/reiniciar cohete procedural del espacio o de D1 en selva. En F4 debe observarse un
+cohete.
+2 / 3
+Alternar puerta de cápsula / paneles del satélite.
+4 / 5
+Salida y regreso del Fighter / puerta del hangar; 5 actúa estando estacionado.
+6 / 7
+En roca: reproducir / reiniciar cohete por cuadros clave.
+F / L / K
+Linterna / faro de nave / foco de la base.
+F9 / Esc
+Liberar o capturar el cursor / cerrar el programa.
+Modo, zona y vista
+F1-F4 no significan primera, segunda, tercera o cuarta persona. F5-F8 cambian de lugar. C activa una
+cámara libre y en F4 la rueda ajusta distancia; esos cambios de vista no crean un modo nuevo de juego.
+
+
+--- 3 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+3
+3. Recorrido sugerido
+1) Revisa la base y el HUD. 2) Usa F6 para ir a roca y F1 para caminar con Rek’Sai; prueba WASD y
+ratón. 3) Con 2 observa la puerta de la cápsula. Con 6 reproduce el cohete por piezas y con 7 lo reinicias.
+4) Usa F5 para la selva. 5) Con F2 entra en carrera; con W/S regula velocidad y con A/D el carril. 6) En
+F3 vuela entre planetas. Acercarte a la atmósfera cambia de zona; E actúa según el contexto y los
+portales permiten salir. En océano el recorrido de la nave sigue la ola hasta su salida.
+En F4, Tab recorre D1, hangar, roca, selva, satélite y cohete de la base cuando están disponibles. En el
+hangar, 4 inicia la salida/regreso del Fighter y 5 demuestra la puerta. En el satélite, 3 repliega los
+paneles. Con F1 vuelves al recorrido a pie del último planeta. F8 regresa al espacio.
+Figura 2. Hangar observado desde F4.
+Si algo falla
+Si no aparece ventana, comprueba las DLL y recursos completos y consulta el registro de
+--probar-release; un fallo de dependencias puede cerrar el EXE antes de mostrar texto. Si no ves el
+cursor, usa F9. Si te pierdes, usa F8 o F6/F1. Si una tecla no responde durante una carga, espera y
+vuelve a pulsarla. La primera visita puede cargar modelos. No se garantiza compatibilidad con equipos
+sin OpenGL 4.3.
+
+
+--- 4 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+4
+Trabajo en equipo y mi aportación
+Este proyecto se desarrolló en equipo durante el laboratorio. Cada integrante se encargó de una parte y
+después juntamos el trabajo en un mismo programa. Esta documentación es mi entrega individual de
+Teoría, identificada con 320324187 y GPO06.
+Integrante
+Parte del proyecto
+A
+Motor, escena, cámaras, iluminación, compilación, merges y preparación del Release.
+B
+Mundos, infraestructura, carga de recursos y animaciones de los elementos del entorno.
+C - 320324187
+Rek’Sai, movimiento y animación del avatar, entrada y experiencias, integración con el
+programa común, HUD y pruebas de mi parte.
+Qué hice yo
+Mi parte principal fue trabajar con Rek’Sai: preparar sus piezas y puntos de giro, ajustar la caminata y
+conectar su movimiento con los controles. También trabajé en la entrada de teclado y mouse y en el
+HUD, para mostrar el modo, la zona y el estado del jugador. Al integrar mi parte revisé que funcionara
+con las cámaras y los escenarios del equipo.
+En el código, esta parte se puede seguir en src/game/avatar/Avatar.cpp, Input.cpp y src/ui/Hud.cpp,
+además de su conexión en Main.cpp. El historial también registra la integración posterior de TARS en el
+océano. Los módulos del motor y del mundo conservan el trabajo de A y B.

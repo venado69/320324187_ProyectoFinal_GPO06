@@ -1,0 +1,308 @@
+--- 1 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+1
+COMPUTER GRAPHICS - THEORY
+Technical manual
+320324187 · GPO06
+2027-1 · 23 November 2026
+1. Objective and scope
+Develop and document an interactive 3D environment for Windows that connects planetary exploration,
+racing, flight and observation. The individual contribution covers the Rek’Sai avatar, its hierarchical
+animation, input capture and HUD, integrated with the team’s engine and world.
+The implemented scope includes a space base and three surfaces: rock, forest and ocean. Zone
+transitions change state and scene; they are not continuous landings on a sphere. F1-F4 select
+experiences. Follow, chase, flight and orbit camera rigs determine how each experience is viewed.
+Limitations
+Window::Initialise requests an OpenGL 4.3 Core context, although earlier documentation referred to 3.3.
+The target is Windows x64 with C++17 and toolset v143. There is no biological simulation or general
+physics engine. Delivery textures were reduced to at most 512 × 512, which reduces visual detail. No
+performance benchmark or independent second-computer test is available.
+Technical background
+Programmable rasterization separates vertex attributes, transformations, texture sampling and
+per-fragment lighting [1]. The project uses this pipeline for imported models and procedural geometry.
+GLFW manages the window, context and events [2]; GLM supplies vector and matrix types [3]; Assimp
+reads model files into an imported scene [4]. Animation uses hierarchical transforms, parametric paths
+and keyframes, making the mathematics of each frame explicit.
+
+
+--- 2 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+2
+2. Technologies and decisions
+Technology
+Use and rationale
+Alternative / trade-off
+C++17 / Visual Studio
+Native code, Windows solution and existing
+libraries.
+More manual control than an integrated
+engine.
+OpenGL / GLSL
+Explicit transforms and lighting, consistent with
+the lab.
+An integrated engine would reduce
+custom code and hide part of the pipeline.
+GLFW / GLEW
+Window, input and OpenGL function access.
+Direct Win32 use would require more
+platform code.
+GLM
+Matrices consistent with GLSL conventions.
+Custom algebra would add
+implementation risk.
+Assimp
+OBJ/FBX loading, meshes, materials and
+triangulation.
+Rek’Sai also uses a group-aware OBJ
+reader.
+Blender
+Part preparation and polygon reduction in local
+copies.
+Blender is not required to play.
+Actual code structure
+Main.cpp coordinates the loop, zones, lights and infrastructure actions. SceneVerification.cpp contains
+integrated checks, not a second main. src/engine contains Window, Model, Texture, Shader_light and
+light classes. src/scene contains SceneNode, Scene and CameraDirector with FollowXZ, Chase, Flight
+and Orbit. src/game/world contains Superficie, Espacio, Oceano, Jugador and Reloj. Avatar.cpp and
+Tars.cpp manage articulated models. Input.cpp separates capture from mapping; src/ui/Hud.cpp draws
+state. CoheteKeyframes.h loads and plays twenty channels for the multipart rocket.
+
+
+--- 3 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+3
+3. System flow and contracts
+Start: locate assets / create OpenGL context
+Load shared resources and avatar
+Poll events and consume input
+Update mode, zone, player and animation
+Update world matrices, lighting and camera
+Render skybox, scene and HUD / swap
+Continue until Escape or close
+Data, ownership and ordering
+InputCapture updates held keys, press edges, mouse motion and wheel input. The delivery fix preserves
+presses released within one glfwPollEvents call and consumes each event once. CameraDirector mode
+and active zone are independent states. Normal frame time is capped at 0.05 s; animation tests use a
+fixed 1/60 s step.
+SceneNode owns children through unique_ptr and holds borrowed graphics-resource references.
+updateWorld propagates matrices before cameras and rendering consume them. Avatar::attach classifies
+OBJ groups and builds nine parts with local pivots. Model::LoadModel imports meshes and materials;
+resolverRutaTextura resolves relative resources. PrepararRecursosSuperficie prepares planets on
+demand.
+Startup locates Models and Textures relative to the executable and its parent directories.
+Window::Initialise centers the window in the primary monitor’s work area. The context is created before
+GPU resources are loaded. Readable sources, the solution and local dependencies are included.
+
+
+--- 4 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+4
+4. Transforms and lighting
+SceneNode::local builds Mlocal = T · Ry · Rx · Rz · S. updateWorld computes Mworld = Mparent · Mlocal.
+A part’s point is transformed locally and then inherits its parent’s transform. Rotation about a hinge p uses
+T(p) · R(θ) · T(-p); Main.cpp applies this to the capsule and CoheteKeyframes::Dibujar to rocket parts.
+shaders/shader_light.frag computes ambient, diffuse and Phong-style specular reflection: Id = kd ·
+max(N·L,0) and Is = ks · max(V·R,0)^s. Point lights are attenuated with distance; spotlights add a cutoff
+cone. Materials control shininess and specular intensity. Emission supplies self-brightness, rather than
+illumination received by geometry.
+The lighting cycle uses θ = 2πt/120 and sunHeight = sin(θ). A clamped day factor preserves ambient light
+and controls lamps. F, L and K toggle three spotlights. Captures show deliberately dark areas; the
+presence of a shader alone does not establish that lighting is free from defects.
+Figure 1. Rock zone: avatar, capsule, crystals and lamps in the Release render.
+
+
+--- 5 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+5
+5. Seven animation systems
+The count groups repetitions and all parts of a gait. The keyframed rocket is distinguished from procedural
+launch because it combines multipart staging and orbit across twenty channels, whereas the latter uses a
+state machine and accelerated ascent. Acceptance of this distinction belongs to the evaluator; parametric
+NPCs in Superficie::MatrizNPC and the Fighter departure/return provide additional implemented
+candidates.
+ID / object
+Context and counting
+Implementation
+1 Rek’Sai
+Complete gait; one articulated animation.
+Avatar::update
+src/game/avatar/Avatar.cpp
+2 Keyframed rocket
+Launch and staging: one system, not one
+animation per part.
+CoheteKeyframes::Actualizar / Dibujar
+src/game/anim/CoheteKeyframes.h
+3 Procedural rocket
+Ignition, ascent, orbit and reset; both sites
+count once.
+Espacio::ActualizarCohetes
+src/game/world/Espacio.cpp
+4 Doors
+Capsule/hangar access; all doors are
+conservatively grouped.
+AnimarCapsula / ActualizarPuertaHangar
+Main.cpp
+5 Satellite panels
+Panel deployment; two panels count once.
+AnimarSatelite
+Main.cpp
+6 Satellite trajectory
+Inspection of an orbital object; rotor included
+in this system.
+PosicionSatelite / TangenteSatelite / 
+AnimarSatelite
+Main.cpp
+7 Rival ships
+Circuit competition; both rival ships count
+once.
+Jugador::EstadoRival
+src/game/world/Jugador.cpp
+The next page details equations and test procedures. A still image establishes rendering, not temporal continuity.
+
+
+--- 6 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+6
+Animation mathematics and testing
+1. Rek’Sai
+Opposing legs: 0.78 sin(φ) and 0.78 sin(φ+π). Arms, head and tail share that phase; φ advances with dt
+and speed.
+2. Keyframed rocket
+20 channels; α=(t-ti)/(ti+1-ti); v=(1-α)vi+αvi+1. Includes translation, pivot rotation, staging and orbit.
+3. Procedural rocket
+Ascent h=Hτ², with τ clamped to [0,1]; ignition vibration and orbital oscillation.
+4. Doors
+Capsule: θ←θ+(θtarget-θ)min(1,6dt), around a local hinge. Hangar: clamped two-second opening.
+5. Satellite panels
+Factor interpolated toward 0/1, rotation toward ±85° and opposing oscillations when deployed.
+6. Satellite trajectory
+Two parametric lobes; a normalized tangent orients the object. θ←θ+ωdt; the guide adjusts parameter
+steps using derivative magnitude.
+7. Rival ships
+d=(offset+18t) mod L. Accumulated distance selects a segment; position and tangent frame come from
+track, surface or ocean.
+Run LabCGeIHC.exe --probar-animaciones. The sequence injects events through the same GLFW callback used by the keyboard,
+advances 3360 frames at dt=1/60 and captures every 120 frames. It activates 6 in rock, F4/1 for D1, Tab/4 for the hangar, Tab/3 for
+the satellite, F2 for rivals and F1/W for gait. It does not replace manual review of framing, intersections or artistic quality.
+
+
+--- 7 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+7
+6. Individual Gantt and responsibilities
+The chart shows Member C’s completed activities. The intervals on 17 and 30-31 October and 7
+November come from historical records; they are not confirmed working hours for this submission.
+Activities on 2 and 6 November and 12-14 November reflect the current confirmations. Commit
+timestamps are not converted into work durations.
+17 Oct
+30 Oct
+2 Nov
+6 Nov
+14 Nov
+Resources / prior work
+Rek’Sai preparation
+Avatar + HUD
+Integration / tests
+TARS (Git)
+Documents
+Calendar intervals, not hours.
+Role
+Documented responsibility
+Member A
+Engine, scene, cameras, lighting, builds, merges and Release.
+Member B
+Worlds, resources, infrastructure and its animations.
+Member C - 320324187
+Rek’Sai, input, experiences, integration and HUD; Git records TARS as a later addition.
+7. Cost and pricing analysis
+Declared direct cash outlay: MXN $0. Team members already owned their computers and reported no
+project-specific purchases. Development still has an economic cost: electricity, depreciation and total
+hours for all three members were not measured. Seven individual hours are confirmed for HUD,
+integration and documentation, but no hourly rate was set and this record does not cover the entire
+project.
+Valuation model: Cdevelopment = Σ(hi · ri) + Cenergy + Cequipment + Cpurchases. Unrecorded terms
+remain unquantified. The student proposes a free demo to gather feedback, find defects and guide
+improvements, followed by a version priced at approximately MXN $120. This is an intended price, not an
+actual sale, validated quotation or revenue forecast. Break-even cannot be calculated without total cost
+and distribution expenses.
+
+
+--- 8 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+8
+8. Verification and reproducibility
+Release x64 was compiled with the installed Visual Studio MSBuild. The build completed with existing
+conversion warnings, mainly C4244/C4305. --probar-release completed space, rock, forest, ocean,
+racing, D1 launch and hangar with exit code 0. The executable was tested from another directory. A real
+window was observed and captured at the space base. Automatic captures document the zones’
+framebuffers.
+OBJ models are checked for in-range indices and finite values; missing fallback materials and discovered
+absolute paths are corrected. These checks do not prove watertight meshes, absence of degenerate
+faces or absence of all intersections. Optimization reduces detail; artistic quality and all collisions require
+broader visual exploration. TARS is integrated, updated and conditionally visible in the ocean. The
+Freezer-inspired station is loaded; this does not establish that every earlier ship variant remains in the
+project.
+Individual conclusion
+Working on Rek’Sai connected geometry groups, pivots and matrices with visible motion. A gait requires
+coordinated parts rather than unrelated leg rotations. Integration with input, cameras and HUD required a
+clear separation between user intent, world state and presentation. I also learned that compilation alone
+does not ensure that another person sees a window or finds the assets. Documenting the code and
+repeating complete executable tests helps distinguish an implemented function from a verified
+experience.
+System conclusion and delivery limits
+The scene combines transforms, synthetic cameras, lighting and procedural animation in a shared
+application. Functional roles helped integrate models and experiences, but external resources and
+outdated documentation caused discrepancies. The current preparation improves portability, size and
+traceability without replacing outstanding tests. The evaluated version is in the individual
+320324187_ProyectoFinal_GPO06 repository, on main. PROCEDENCIA.txt identifies the version of the
+team project used for this copy. A second-computer test and full geometry review remain outstanding.
+Sources consulted [1]-[5]
+[1] Khronos Group. The OpenGL Graphics System, version 4.3 Core Profile (2013).
+https://registry.khronos.org/OpenGL/specs/gl/glspec43.core.pdf
+[2] GLFW. Documentation. https://www.glfw.org/documentation.html
+[3] G-Truc Creation. OpenGL Mathematics. https://glm.g-truc.net/0.9.9/index.html
+[4] Assimp. Working with the Asset-Importer-Lib. https://the-asset-importer-lib-documentation.readthedocs.io/en/latest/usage/use_th
+e_lib.html
+[5] Original team repository / repositorio original del equipo: https://github.com/Cuervy117/CG_proyecto. Individual submission /
+entrega individual: https://github.com/venado69/320324187_ProyectoFinal_GPO06 (main).
+
+
+--- 9 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+9
+9. Animation evidence and results
+The reproducible sequence completed with exit code 0. The keyframed rocket reached t=26.000 s; the
+satellite advanced to θ=1.434 with panel deployment factor 0.000; the capsule door reached 75.000°;
+Rek’Sai moved 28.233 units on foot with a leg angle of -0.351 rad. These values belong to the simulated
+test and are not performance measurements.
+The seven-animation table, including object, context, function, mathematics, evidence and procedure, is
+also provided as 320324187_Animaciones_GPO06_EN.csv and its ES counterpart. Images are named
+after the test frame, such as 2880/3000 for gait, 1920/2040 for the hangar and 2400/2520 for rivals. This
+figure uses a rocket framing exclusive to the test.
+Figure 2. Frames 0, 480, 960 and 1679: ascent, staging and falling parts.
+
+
+--- 10 ---
+320324187 | GPO06 | Computación Gráfica - Teoría
+10
+Teamwork and my contribution
+This project was developed as a team during the laboratory course. Each member worked on a different
+part, and we then integrated those parts into one application. This documentation is my individual Theory
+submission, identified by 320324187 and GPO06.
+Member
+Project contribution
+A
+Engine, scene, cameras, lighting, compilation, merges and Release preparation.
+B
+Worlds, infrastructure, resource loading and animation of environmental objects.
+C - 320324187
+Rek’Sai, avatar movement and animation, input and experiences, integration with the shared
+application, HUD and tests of my contribution.
+What I worked on
+My main contribution was Rek’Sai: preparing the parts and pivots, adjusting the gait and connecting
+movement to the controls. I also worked on keyboard and mouse input and the HUD, which displays the
+mode, zone and player state. During integration, I checked that my contribution worked with the team’s
+cameras and environments.
+This contribution can be followed in src/game/avatar/Avatar.cpp, Input.cpp and src/ui/Hud.cpp, together
+with their integration in Main.cpp. The history also records the later integration of TARS in the ocean.
+Engine and world modules retain the work of A and B.
